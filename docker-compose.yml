@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: expenseflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: expenseflow
+      POSTGRES_PASSWORD: expenseflow
+      POSTGRES_DB: expenseflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - expenseflow_pgdata:/var/lib/postgresql/data
+
+volumes:
+  expenseflow_pgdata:
