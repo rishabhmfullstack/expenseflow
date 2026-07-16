@@ -47,6 +47,16 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   ],
 };
 
+function getActiveNavHref(pathname: string, navItems: NavItem[]): string | null {
+  const matches = navItems.filter(
+    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+  );
+
+  if (matches.length === 0) return null;
+
+  return matches.reduce((best, item) => (item.href.length > best.href.length ? item : best)).href;
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -55,6 +65,7 @@ export function Sidebar() {
   if (!user) return null;
 
   const navItems = NAV_BY_ROLE[user.role];
+  const activeHref = getActiveNavHref(pathname, navItems);
 
   const content = (
     <div className="flex h-full flex-col">
@@ -68,7 +79,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active = item.href === activeHref;
           return (
             <Link
               key={item.href}
